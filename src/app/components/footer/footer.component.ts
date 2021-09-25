@@ -40,7 +40,7 @@ import { Component } from '@angular/core';
       </svg>
       <p class="text-sm">adi.so</p>
     </a>
-    <a href="https://github.com/adisreyaj/ng-custom-form-elements" target="_blank" class="flex space-x-1 items-center">
+    <a href="https://github.com/adisreyaj/custom-form-controls" target="_blank" class="flex space-x-1 items-center">
       <svg
         width="22"
         height="22"
