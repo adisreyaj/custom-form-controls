@@ -1,6 +1,5 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, forwardRef, Provider, ViewChild } from '@angular/core';
-import { ControlValueAccessor, NgForm, NG_VALUE_ACCESSOR } from '@angular/forms';
-import * as validator from 'card-validator';
+import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { CardNumberVerification } from 'card-validator/dist/card-number';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -10,12 +9,6 @@ export interface CreditCardData {
   date: string;
   cvv: number;
 }
-
-const CC_CONTROL_VALUE_ACCESSOR: Provider = {
-  provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => CreditCardComponent),
-  multi: true,
-};
 
 @Component({
   selector: 'app-credit-card',
@@ -42,13 +35,9 @@ const CC_CONTROL_VALUE_ACCESSOR: Provider = {
       }
     `,
   ],
-  providers: [CC_CONTROL_VALUE_ACCESSOR],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CreditCardComponent implements ControlValueAccessor, AfterViewInit {
-  private onTouched!: Function;
-  private onChanged!: Function;
-
+export class CreditCardComponent {
   cardInfo$ = new BehaviorSubject<CardNumberVerification | null>(null);
   cardImage$ = this.cardInfo$.pipe(
     map((data) => {
@@ -60,25 +49,4 @@ export class CreditCardComponent implements ControlValueAccessor, AfterViewInit 
   );
 
   @ViewChild(NgForm) form: NgForm | null = null;
-
-  ngAfterViewInit() {
-    if (this.form) {
-      this.form.valueChanges?.subscribe((data: CreditCardData) => {
-        this.cardInfo$.next(validator.number(data.number));
-        this.onChanged(data);
-        this.onTouched();
-      });
-    }
-  }
-  writeValue(value: CreditCardData): void {
-    setTimeout(() => {
-      this.form?.setValue(value);
-    });
-  }
-  registerOnChange(fn: any): void {
-    this.onChanged = fn;
-  }
-  registerOnTouched(fn: any): void {
-    this.onTouched = fn;
-  }
 }
